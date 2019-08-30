@@ -1,4 +1,4 @@
-一、依赖安装
+﻿一、依赖安装
 
 pip install opencv-python    (即cv2)
 
@@ -15,7 +15,7 @@ pip install -r requirements.txt    #第二步
 #*******************************************************************************
 二、配置信息
 
-webcam.py文件第31行  vc = cv2.VideoCapture(1)
+webcam.py文件第33行  vc = cv2.VideoCapture(1)
 括号内数为调用的摄像头选项，0为本地摄像头，按需要修改
 
 

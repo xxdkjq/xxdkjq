@@ -15,7 +15,6 @@ def _load_emoticons(emotions):
     return [nparray_as_image(cv2.imread('graphics/%s.png' % emotion, -1), mode=None) for emotion in emotions]
 
 
-
 def show_webcam_and_run(model, emoticons, window_size=None, window_name='webcam', update_time=10):
     """
     Muestra la webcam y detecta los rostros y las emociones en tiempo real para dibujar los emojis.
@@ -30,35 +29,33 @@ def show_webcam_and_run(model, emoticons, window_size=None, window_name='webcam'
         width, height = window_size
         cv2.resizeWindow(window_name, width, height)
 
+    # 选择摄像头，0为本地
     vc = cv2.VideoCapture(0)  # http://192.168.0.2:4747/mjpegfeed para camara android remota por medio de Droidcam
-    vc.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-    vc.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
+    # 摄像头分辨率，默认为当前使用摄像头的最高分辨率
+
+    # vc.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    # vc.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
     if vc.isOpened():
         read_value, webcam_image = vc.read()
-
     else:
         print("[ERROR] No se enontro camara.")
         return
-
     while read_value:
         for normalized_face, (x, y, w, h) in find_faces(webcam_image):
-
             prediction = network.predict(normalized_face)  # hace la prediccion
             prediction = prediction[0]  # guarda el numero de la emocion para diujar el emoji
             # carga el emoji para dibujarlo
             image_to_draw = emoticons[prediction.tolist().index(max(prediction))]
             # dibuja el emoji
-            draw_with_alpha(webcam_image, image_to_draw, (x, y, w, h))#image_to_draw,  ,  webcam_image,
-
+            draw_with_alpha(webcam_image, image_to_draw, (x , y - 100, w, h))   # image_to_draw,  ,  webcam_image,
+        cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
         cv2.imshow(window_name, webcam_image)
         read_value, webcam_image = vc.read()
         key = cv2.waitKey(update_time)
-
         if key == 27:  # salir con esc
             break
-
     cv2.destroyWindow(window_name)
 
 
@@ -70,9 +67,8 @@ if __name__ == '__main__':
     # crea la red 
     network = EMR()
     network.build_network()
-
     # ejecuta la app
     window_name = "faceDetect emojis"
-    show_webcam_and_run(network,emoticons, window_size=(1920, 1080), window_name=window_name, update_time=30)
+    show_webcam_and_run(network,emoticons, window_size=(720, 480), window_name=window_name, update_time=30)#窗口格式设置
 
 

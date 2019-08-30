@@ -39,9 +39,13 @@ def draw_with_alpha(source_image, image_to_draw, coordinates):
     :param image_to_draw: donde se va a dibujar la imagen.
     :param coordinates: coordenada de donde se va a dibujar la imagen su ancho y alto.
     """
-    x, y, w, h = coordinates
-    image_to_draw = image_to_draw.resize((h,w ), Image.ANTIALIAS)
+    x, y , w, h = coordinates
+    image_to_draw = image_to_draw.resize((h, w), Image.ANTIALIAS)
     image_array = image_as_nparray(image_to_draw)
     for c in range(0, 3):
+        if y >= 480:       # 设置窗口高度，防止溢出界面
+            y = 480
+        elif y <= 0:
+            y = 0
         source_image[y:y + h, x:x + w, c] = image_array[:, :, c] * (image_array[:, :, 3] / 255.0) \
                                             + source_image[y:y + h, x:x + w, c] * (1.0 - image_array[:, :, 3] / 255.0)
